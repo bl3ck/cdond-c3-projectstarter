@@ -29,7 +29,7 @@ jobs:
           command: |
             cd frontend
             npm install
-            npm run test
+            npm run build
             exit
       - save_cache:
           paths: [frontend/node_modules]
@@ -47,7 +47,7 @@ jobs:
           command: |
             cd backend
             npm install
-            npm run test
+            npm run build
             exit
       - save_cache:
           paths: [backend/node_modules]
@@ -91,6 +91,40 @@ jobs:
           paths: [backend/node_modules]
           key: test-backend
   
+  scan-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [scan-frontend]
+      - run:
+          name: Scan Front-end
+          command: |
+            cd frontend
+            npm install
+            npm audit --audit-level=critical
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: scan-frontend
+  
+  scan-backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [scan-backend]
+      - run:
+          name: Scan Back-end
+          command: |
+            cd backend
+            npm install
+            npm audit --audit-level=critical
+      - save_cache:
+          paths: [backend/node_modules]
+          key: scan-backend
+  
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -103,3 +137,7 @@ workflows:
           requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - scan-backend:
+          requires: [build-frontend]
