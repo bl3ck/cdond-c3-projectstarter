@@ -106,7 +106,7 @@ jobs:
             # npm audit fix --audit-level=critical --force
       - save_cache:
           paths: [frontend/node_modules]
-          key: scan-frontend
+          key: scan-frontend 
   
   scan-backend:
     docker:
