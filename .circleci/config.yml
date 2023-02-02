@@ -122,7 +122,7 @@ jobs:
             cd backend
             # If the "npm audit fix" command above could not fix all critical vulnerabilities, try “npm audit fix --force” again
             npm audit fix --audit-level=critical --force
-            npm audit fix --audit-level=critical --force
+            npm audit fix --audit-level=critical --force 
       - save_cache:
           paths: [backend/node_modules]
           key: scan-backend
