@@ -213,6 +213,7 @@ jobs:
             pwd
             cd .circleci/ansible
             ls -al
+            cat inventory.txt
             ansible all -i tests -m ping
             ansible-playbook -i inventory.txt configure-server.yml
           no_output_timeout: 30m
