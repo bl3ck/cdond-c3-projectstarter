@@ -215,7 +215,8 @@ jobs:
             ls -al
             cat inventory.txt
             # ansible web -i tests -m ping
-            ansible all -m ping -vvvv
+            # ansible all -m ping -vvvv
+            ansible all -m ping -u ubuntu
             ansible-playbook -i inventory.txt configure-server.yml
           no_output_timeout: 30m
       # Here's where you will add some code to rollback on failure 
