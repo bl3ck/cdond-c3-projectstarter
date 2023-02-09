@@ -325,7 +325,7 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
             sudo npm install -g npm
-            sudo npm install typescript -g
+            # sudo npm install typescript -g
             sudo npm i -g npm
       - run:
           name: Install dependencies
@@ -344,7 +344,7 @@ jobs:
             echo "API_URL=http://${BACKEND_PUBLIC_IP}:3030" >> frontend/.env
             cat frontend/.env
             cd frontend
-            npm update
+            # npm update
             npm run build
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment:
