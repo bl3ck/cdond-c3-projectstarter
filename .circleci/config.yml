@@ -266,6 +266,7 @@ jobs:
             cd backend
             ls -a
             sudo npm install -g
+            sudo npm install typescript -g
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
       - run:
