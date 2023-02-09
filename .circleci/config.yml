@@ -315,8 +315,9 @@ jobs:
           command: |
             # Install Node.js 
             cd backend
-            curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-            sudo apt-get install -y nodejs
+            curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+            sudo apt install -y nodejs
+            node --version
             # sudo npm install --global n
             # sudo n 13.8.0
             # Installing aws cli
