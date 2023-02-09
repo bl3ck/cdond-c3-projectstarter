@@ -260,7 +260,7 @@ jobs:
           name: Run migrations 
           command: |
             cd backend
-            # ls -a
+            # ls -a 
             sudo npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
       - run:
