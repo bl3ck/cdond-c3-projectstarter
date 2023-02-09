@@ -264,8 +264,8 @@ jobs:
           name: Run migrations 
           command: |
             cd backend
-            ls -a
-            sudo npm install -g
+            # ls -a
+            sudo npm install -g npm@9.4.2
             sudo npm install typescript -g
             sudo npm i -g npm
             npm run migrations > migrations_dump.txt
