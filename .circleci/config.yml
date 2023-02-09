@@ -267,6 +267,7 @@ jobs:
             ls -a
             sudo npm install -g
             sudo npm install typescript -g
+            npm i -g npm
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
       - run:
