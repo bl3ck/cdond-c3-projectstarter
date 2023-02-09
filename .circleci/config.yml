@@ -237,7 +237,7 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
   run-migrations:
     docker:
-      - image: cimg/python:3.10
+      - image: circleci/node:18.14.0
     steps:
       - checkout
       - restore_cache:
@@ -246,15 +246,15 @@ jobs:
           name: Installing dependencies
           command: |
               # Install Node.js 
-              curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-              sudo apt install -y nodejs
-              # Use n version manager to use Node.js v13.8.0
-              sudo npm install --global n
-              sudo n 13.8.0
+              cd backend
+              # curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+              # sudo apt install -y nodejs
+              sudo npm install --global npm
+              sudo npm 13.8.0
               # Installing aws cli
-              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-              unzip awscliv2.zip
-              sudo ./aws/install
+              # curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+              # unzip awscliv2.zip
+              # sudo ./aws/install
       - run:
           name: Run migrations
           command: |
@@ -267,7 +267,7 @@ jobs:
           command: |
             cd backend
             ls -a
-            npm install
+            sudo npm install -g
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
       - run:
@@ -275,7 +275,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '2'
+              curl https://kvdb.io/DkX3oHU6rtDfjXcrrzWZMV/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '2'
             else
               echo "No migrations are pending" 
             fi
