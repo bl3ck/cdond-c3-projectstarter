@@ -16,7 +16,7 @@ commands:
           command: |
             # Your code here
             # Empty frontend bucket
-            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            # aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             # Delete frontend stack
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
             # Delete backend stack
@@ -381,6 +381,8 @@ jobs:
           name: Install dependencies
           command: |
             cd backend
+            sudo npm install -g npm
+            sudo npm i -g npm
             npm install
       - run:
           name: Package Backend
