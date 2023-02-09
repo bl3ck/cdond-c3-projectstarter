@@ -204,7 +204,13 @@ jobs:
           name: Install dependencies
           command: |
             # Your code here
-            apk add --update --no-cache ansible tar gzip aws-cli openssh
+            python3 -m pip install --user ansible
+            sudo apt-get update
+            sudo apt-get install -y tar unzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            # apk add --update --no-cache ansible tar gzip aws-cli openssh
       - run:
           name: Configure server
           command: |
