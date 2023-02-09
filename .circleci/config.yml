@@ -16,6 +16,26 @@ commands:
           command: |
             # Your code here
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+  revert-migration:
+    description: Reverts migrations for given a workflow ID.
+    parameters:
+      # Add parameter here
+      workflow_id:
+        type: string
+    steps:
+      - run:
+          name: Revert migration
+          when: on_fail
+          command: |
+            # Your code here
+            SUCCESS=$(curl --insecure  https://kvdb.io/DkX3oHU6rtDfjXcrrzWZMV/migration_${CIRCLE_WORKFLOW_ID:0:7})
+            # Logic for reverting the database state
+            if (( $SUCCESS == 2 ));
+            then
+              cd backend
+              npm install
+              npm run migration:revert
+            fi
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -274,46 +294,48 @@ jobs:
             fi
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migration:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
-deploy-frontend:
-  docker:
-    - image: cimg/python:3.10
-  steps:
-    - checkout
-    - restore_cache:
-        keys: [frontend-build]
-    - run:
-        name: Install env dependencies
-        command: |
-          # Install Node.js 
-          cd backend
-          curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-          sudo apt-get install -y nodejs
-          # Installing aws cli
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
-    - run:
-        name: Install dependencies
-        command: |
-          cd frontend
-          npm install
-    - run:
-        name: Deploy frontend objects
-        command: |
-          BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --output text)
-          export API_URL="http://${BACKEND_PUBLIC_IP}:3030"
-          echo "${API_URL}"
-          echo "API_URL=http://${BACKEND_PUBLIC_IP}:3030" >> frontend/.env
-          cat frontend/.env
-          cd frontend
-          npm run build
-          aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-    - destroy-environment:
-      - workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+  deploy-frontend:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Install env dependencies
+          command: |
+            # Install Node.js 
+            cd backend
+            curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            # Installing aws cli
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Install dependencies
+          command: |
+            cd frontend
+            npm install
+      - run:
+          name: Deploy frontend objects
+          command: |
+            BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
+            export API_URL="http://${BACKEND_PUBLIC_IP}:3030"
+            echo "${API_URL}"
+            echo "API_URL=http://${BACKEND_PUBLIC_IP}:3030" >> frontend/.env
+            cat frontend/.env
+            cd frontend
+            npm run build
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
