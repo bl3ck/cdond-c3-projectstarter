@@ -260,7 +260,7 @@ jobs:
           command: |
             cd backend
             ls -a
-            # npm cache clean –force
+            npm cache clean --force
             rm -rf node_modules
       - run: 
           name: Actual Migration
