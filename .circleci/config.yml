@@ -386,19 +386,13 @@ jobs:
             npm --version
             npm install
       - run:
-          name: Package Backend
+          name: Package Backend and Deploy backend
           command: |
             cd backend
-            npm run build
-            tar -czf artifact.tar.gz dist/* package*
-            cd ..
-            cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
-      - run:
-          name: Deploy backend
-          command: |
+
             touch .env
-            echo ENVIRONMENT=production > "«env"
-            echo TYPEORM_CONNECTION=postgres >> ".env"
+            echo ENVIRONMENT = production > "«env"
+            echo TYPEORM_CONNECTION = postgres >> ".env"
             echo TYPEORM_ENTITIES = ./src/modules/domain/**/*.entity.ts >> ".env"
             echo TYPEORM_MIGRATIONS = *./src/migrations/*.ts >> ".env"
             echo TYPEORM_MIGRATIONS_DIR = ./src/migrations >> ".env"
@@ -413,6 +407,12 @@ jobs:
             # export TYPEORM_MIGRATIONS_DIR=./migrations
             # export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
             # export TYPEORM_MIGRATIONS=./migrations/*.ts
+
+            npm run build
+            
+            cd ..
+            tar -C backend artifact.tar.gz .
+
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
