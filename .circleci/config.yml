@@ -459,7 +459,7 @@ jobs:
   cloudfront-update:
     docker:
       # Docker image here that supports AWS CLI
-      - image: cimg/base:stable
+      - image: amazon/aws-cli
     steps:
       # Checkout code from git
       - checkout
@@ -467,36 +467,36 @@ jobs:
           name: Install image dependencies
           command: |
             # Your code here
-            # Installing aws cli
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
+            yum install tar gzip -y
       - run:
-          name: Install dependencies
-          command: |
-            cd backend
-            curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-            sudo apt install -y nodejs
-            node --version
-            npm --version
-            npm install
-      - run:
-          name: Save Old Workflow ID to kvdb.io
+          name: Old Workflow ID to kvdb.io
           command: |
             export OLD_WORKFLOW_ID=$(aws cloudformation \
                         list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
                         --no-paginate --output text)
-            echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
+            echo $OLD_WORKFLOW_ID >> ~/project/OLD_WORKFLOW_ID.txt
+            cat ~/project/OLD_WORKFLOW_ID.txt
             curl https://kvdb.io/DkX3oHU6rtDfjXcrrzWZMV/old_workflow_id -d "${OLD_WORKFLOW_ID}"
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/OLD_WORKFLOW_ID.txt
       - run:
           name: Update cloudfront distribution
           command: |
             # your code here
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
-              --stack-name udapeople-cloudfront \
-              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
+              --stack-name InitialStack \
+              --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}"
+              --tags project=udapeople
+            echo Old Wokflow ID: "$(cat ~/project/OLD_WORKFLOW_ID.txt)"
+            echo Current Wokflow ID: "${CIRCLE_WORKFLOW_ID:0:7}"
       # Here's where you will add some code to rollback on failure
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migration:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
