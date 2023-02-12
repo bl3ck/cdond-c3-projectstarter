@@ -411,7 +411,7 @@ jobs:
             npm run build
             
             cd ..
-            tar -C backend artifact.tar.gz .
+            tar -C backend -czvf artifact.tar.gz .
 
             cd .circleci/ansible
             cat inventory.txt
