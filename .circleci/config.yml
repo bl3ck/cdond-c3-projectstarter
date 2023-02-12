@@ -285,7 +285,6 @@ jobs:
           name: Run migrations 
           command: |
             cd backend
-            # ls -a
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
       - run:
