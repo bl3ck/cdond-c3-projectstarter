@@ -404,19 +404,22 @@ jobs:
             # echo TYPEORM_PASSWORD = $TYPEORM_PASSWORD >> "env"
             # echo TYPEORM_DATABASE = $TYPEORM_DATABASE >> ".env"
 
-            # export TYPEORM_MIGRATIONS_DIR=./migrations
-            # export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
-            # export TYPEORM_MIGRATIONS=./migrations/*.ts
-
             npm run build
             
-            cd ..
-            tar -C backend -czvf artifact.tar.gz .
+            # cd ..
+            # tar -C backend -czvf artifact.tar.gz .
+            # Archive the contents of the dist folder, along with backned package information
+            tar -czf artifact.tar.gz dist/* package*
             echo 'HERE'
             pwd
             ls -al
             echo 'AFTER HERE '
-            cp artifact.tar.gz .circleci/ansible/roles/deploy/files
+            cd .circleci
+            cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+
+            export TYPEORM_MIGRATIONS_DIR=./migrations
+            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+            export TYPEORM_MIGRATIONS=./migrations/*.ts
 
             cd .circleci/ansible
             cat inventory.txt
