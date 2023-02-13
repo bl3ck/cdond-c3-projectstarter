@@ -422,8 +422,8 @@ jobs:
             export TYPEORM_MIGRATIONS=./migrations/*.ts
             
             cd ~
-            cd .circleci/ansible
-            ls -al .circleci/ansible
+            # cd .circleci/ansible
+            ls -al 
             cat inventory.txt
             ls -al roles/deploy/files
             ansible-playbook -i inventory.txt deploy-backend.yml
