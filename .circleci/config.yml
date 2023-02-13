@@ -416,7 +416,7 @@ jobs:
             pwd
             ls -al
             echo 'AFTER HERE '
-            cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+            cp artifact.tar.gz .circleci/ansible/roles/deploy/files
 
             cd .circleci/ansible
             cat inventory.txt
