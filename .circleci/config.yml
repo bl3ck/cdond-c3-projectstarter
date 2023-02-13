@@ -414,6 +414,7 @@ jobs:
             pwd
             ls -al
             echo 'AFTER HERE '
+            mkdir -p .circleci/ansible/roles/deploy/files
             cp artifact.tar.gz .circleci/ansible/roles/deploy/files
 
             export TYPEORM_MIGRATIONS_DIR=./migrations
