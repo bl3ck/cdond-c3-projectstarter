@@ -16,6 +16,11 @@
       apt:
         name: python3
         update_cache: yes
+    - name: packages | ensure apt list dir exists
+      file:
+        path: /var/lib/apt/lists/
+        state: directory
+        mode: 0755
 
   # Get the environment variables from CircleCI and add to the EC2 instance
   environment:
