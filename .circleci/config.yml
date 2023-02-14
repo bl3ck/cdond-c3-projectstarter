@@ -423,7 +423,7 @@ jobs:
             
             cd ~
             # cd .circleci/ansible
-            ls -al 
+            ls -al project/.circleci/ansible
             cat inventory.txt
             ls -al roles/deploy/files
             ansible-playbook -i inventory.txt deploy-backend.yml
