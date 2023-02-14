@@ -8,13 +8,10 @@
   unarchive:
     src: artifact.tar.gz
     dest: ~/backend-app
-- name: Install node 
-  shell: |
-    curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash - && sudo apt-get install -y nodejs && sudo npm install -g npm && sudo npm i -g npm
 - name: "Install Node Dependencies"
   shell: |
     cd ~/backend-app
-    npm i
+    npm install
 - name: "Executing Node app with PM2"
   shell: |
     cd ~/backend-app/dist
