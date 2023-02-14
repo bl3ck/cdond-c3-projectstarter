@@ -322,7 +322,6 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
             sudo npm install -g npm
-            # sudo npm install typescript -g
             sudo npm i -g npm
       - run:
           name: Install dependencies
