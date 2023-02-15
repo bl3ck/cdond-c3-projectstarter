@@ -50,5 +50,6 @@
     pm2 save
 - name: "See if server is running"
   shell: |
-    curl http://54.198.83.241:3030 >> info.txt
+    cd ~/backend-app
+    curl ls -al >> info.txt
     cat info.txt
