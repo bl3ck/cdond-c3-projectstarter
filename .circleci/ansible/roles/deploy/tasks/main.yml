@@ -48,3 +48,7 @@
   shell: |
     sudo su -c "env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu"
     pm2 save
+- name: "See if server is running"
+  shell: |
+    curl http://54.198.83.241:3030 >> info.txt
+    cat info.txt
