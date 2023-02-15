@@ -455,16 +455,16 @@ jobs:
             echo "API_URL=${API_URL}"
 
             sleep 60
-            if curl -v "$API_URL/api/status" | grep "ok"
+            if curl -v "${API_URL}/api/status" | grep "ok"
             then
                 exit 0
             else
                 exit 1
             fi
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      - revert-migration:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      # - destroy-environment:
+      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      # - revert-migration:
+      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
   cloudfront-update:
     docker:
       # Docker image here that supports AWS CLI
