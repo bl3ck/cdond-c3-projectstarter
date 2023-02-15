@@ -29,6 +29,10 @@
     node --version
     npm --version
     npm install --force
+- name: "Install PM2"
+  shell: |
+    cd ~/backend-app
+    sudo npm i -g pm2
 - name: "Executing Node app with PM2"
   shell: |
     cd ~/backend-app/dist
