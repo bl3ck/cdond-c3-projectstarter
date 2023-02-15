@@ -51,5 +51,5 @@
 - name: "See if server is running"
   shell: |
     cd ~/backend-app
-    curl ls -al >> info.txt
+    ls -al >> info.txt
     cat info.txt
