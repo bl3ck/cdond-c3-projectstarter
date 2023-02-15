@@ -25,9 +25,10 @@
 - name: "Install Node Dependencies"
   shell: |
     cd ~/backend-app
+    npm cache clean --force
     node --version
     npm --version
-    npm install
+    npm install --force
 - name: "Executing Node app with PM2"
   shell: |
     cd ~/backend-app/dist
