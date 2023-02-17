@@ -88,7 +88,6 @@ jobs:
             cd backend
             npm install
             npm run build
-            exit
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -107,7 +106,6 @@ jobs:
               cd frontend
               npm install
               npm run test
-              exit
       - save_cache:
           paths: [frontend/node_modules]
           key: test-frontend
@@ -184,8 +182,7 @@ jobs:
               --template-file .circleci/files/backend.yml \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-              --tags project=udapeople 
-            exit
+              --tags project=udapeople
       - run:
           name: Ensure front-end infrastructure exists
           command: |
@@ -194,8 +191,7 @@ jobs:
               --template-file .circleci/files/frontend.yml \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-              --tags project=udapeople 
-            exit
+              --tags project=udapeople
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -260,6 +256,7 @@ jobs:
       # Here's where you will add some code to rollback on failure 
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+  
   run-migrations:
     docker:
       - image: circleci/node:16.13.0
@@ -300,6 +297,7 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migration:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+  
   deploy-frontend:
     docker:
       - image: cimg/python:3.10
@@ -397,9 +395,9 @@ jobs:
       - run:
           name: Deploy backend
           command: |
-            export TYPEORM_MIGRATIONS_DIR=./migrations
-            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
-            export TYPEORM_MIGRATIONS=./migrations/*.ts
+            # export TYPEORM_MIGRATIONS_DIR=./migrations
+            # export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+            # export TYPEORM_MIGRATIONS=./migrations/*.ts
 
             cd .circleci/ansible
             cat inventory.txt
