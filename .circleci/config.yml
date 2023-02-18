@@ -358,6 +358,7 @@ jobs:
           name: Install dependencies
           command: |
             cd frontend
+            npm update
             npm install
       - run:
           name: Deploy frontend objects
