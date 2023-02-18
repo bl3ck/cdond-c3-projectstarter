@@ -41,43 +41,7 @@ commands:
               npm install
               npm run migration:revert
             fi
-  
-  install_awscli:
-    description: Install AWS CLI v2
-    steps:
-      - run:
-          name: Install AWS CLI v2
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-  install_ansible:
-    description: Install Ansible
-    steps:
-      - run:
-          name: Install Ansible
-          command: |
-            python3 -m pip install --user ansible
-  install_tar_unzip:
-    description: Install Ansible
-    steps:
-      - run:
-          name: Ensure package tar and unzip are installed
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y tar unzip
-  install_nodejs:
-      description: Install Node.js 13.8.0
-      steps:
-        - run:
-            name: Install Node.js 13.8.0
-            command: |
-              # Install Node.js LTS version as our base Node.js version
-              curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-              sudo apt install -y nodejs
-              # Use n version manager to use Node.js v13.8.0
-              sudo npm install --global n
-              sudo n 13.8.0
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -251,15 +215,26 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - install_tar_unzip
-      - install_awscli
-      - install_ansible
       # Add ssh keys with fingerprint
       - add_ssh_keys:
           fingerprints: ["d0:f5:31:3a:b8:0e:a4:eb:f3:f9:fc:9b:81:08:57:93"]
       # attach workspace
       - attach_workspace:
           at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            # Your code here
+            # Installing ansible
+            python3 -m pip install --user ansible
+            # Installing tar and unzip
+            sudo apt-get update
+            sudo apt-get install -y tar unzip
+            # Installing aws cli
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            # apk add --update --no-cache ansible tar gzip aws-cli openssh
       - run:
           name: Configure server
           command: |
@@ -287,10 +262,22 @@ jobs:
       - image: circleci/node:16.13.0
     steps:
       - checkout
-      - install_nodejs
-      - install_awscli
       - restore_cache:
           keys: [backend-build]
+      - run:
+          name: Installing dependencies
+          command: |
+              # Install Node.js 
+              cd backend
+              curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+              sudo apt-get install -y nodejs
+              # Installing aws cli
+              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+              unzip awscliv2.zip
+              sudo ./aws/install
+              sudo npm install -g npm@9.4.2
+              sudo npm install typescript -g
+              sudo npm i -g npm
       - run: 
           name: Run migrations 
           command: |
@@ -316,10 +303,23 @@ jobs:
       - image: cimg/python:3.10
     steps:
       - checkout
-      - install_nodejs
-      - install_awscli
       - restore_cache:
           keys: [frontend-build]
+      - run:
+          name: Install env dependencies
+          command: |
+            # Install Node.js 
+            cd backend
+            curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+            sudo apt install -y nodejs
+            # sudo npm install --global n
+            # sudo n 13.8.0
+            # Installing aws cli
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            # sudo npm install -g npm
+            sudo npm i -g npm
       - run:
           name: Install dependencies
           command: |
@@ -336,8 +336,8 @@ jobs:
             echo "${API_URL}"
             echo "API_URL=http://${BACKEND_PUBLIC_IP}:3030" >> frontend/.env
             cat frontend/.env
-            
             cd frontend
+            # npm update
             npm run build
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment:
@@ -351,10 +351,6 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - install_tar_unzip
-      - install_ansible
-      - install_awscli
-      - install_nodejs
       - restore_cache:
           keys: [backend-build]
       # Add ssh keys with fingerprint
@@ -363,6 +359,29 @@ jobs:
       # attach workspace
       - attach_workspace:
           at: ~/
+      - run:
+          name: Install image dependencies
+          command: |
+            # Your code here
+            # Installing ansible
+            python3 -m pip install --user ansible
+            # Installing tar and unzip
+            sudo apt-get update
+            sudo apt-get install -y tar unzip
+            # Installing aws cli
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Install dependencies
+          command: |
+            cd backend
+            curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+            sudo apt install -y nodejs
+            sudo npm i -g npm
+            node --version
+            npm --version
+            npm install
       - run:
           name: Package Backend
           command: |
@@ -376,9 +395,9 @@ jobs:
       - run:
           name: Deploy backend
           command: |
-            export TYPEORM_MIGRATIONS_DIR=./migrations
-            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
-            export TYPEORM_MIGRATIONS=./migrations/*.ts
+            # export TYPEORM_MIGRATIONS_DIR=./migrations
+            # export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+            # export TYPEORM_MIGRATIONS=./migrations/*.ts
 
             cd .circleci/ansible
             cat inventory.txt
@@ -393,8 +412,21 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-      - install_awscli
-      - install_nodejs
+      - run:
+          name: Install AWS CLI
+          command: |
+            # Installing aws cli
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Install NodeJS
+          command: |
+            # Installing NodeJS
+            curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+            sudo apt install -y nodejs
+            node --version
+            npm --version
       - run:
           name: Frontend smoke test
           command: |
@@ -420,17 +452,17 @@ jobs:
             export API_URL="http://${BACKEND}:3030"
             echo "API_URL=${API_URL}"
 
-            # sleep 60
+            sleep 60
             if curl -v "${API_URL}/api/status" | grep "ok"
             then
                 exit 0
             else
                 exit 1
             fi
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      - revert-migration:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      # - destroy-environment:
+      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      # - revert-migration:
+      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
   cloudfront-update:
     docker:
       # Docker image here that supports AWS CLI
