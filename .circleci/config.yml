@@ -58,6 +58,13 @@ commands:
           name: Install TypeScript
           command: |
             sudo npm install typescript -g
+  install_npm9:
+    description: Install npm@9.4.2
+    steps:
+      - run:
+          name: Install npm@9.4.2
+          command: |
+            sudo npm install -g npm@9.4.2
             
   install_ansible:
     description: Install Ansible
@@ -298,6 +305,7 @@ jobs:
       - install_nodejs
       - install_awscli
       - install_typescript
+      - install_npm9
       - restore_cache:
           keys: [backend-build]
       - run: 
