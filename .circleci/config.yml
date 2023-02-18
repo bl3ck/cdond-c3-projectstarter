@@ -65,6 +65,7 @@ commands:
           name: Install npm@9.4.2
           command: |
             sudo npm install -g npm@9.4.2
+            sudo npm i -g npm
             
   install_ansible:
     description: Install Ansible
@@ -304,8 +305,8 @@ jobs:
       - checkout
       - install_nodejs
       - install_awscli
-      - install_typescript
       - install_npm9
+      - install_typescript
       - restore_cache:
           keys: [backend-build]
       - run: 
