@@ -51,6 +51,14 @@ commands:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
+  install_typescript:
+    description: Install TypeScript
+    steps:
+      - run:
+          name: Install TypeScript
+          command: |
+            sudo npm install typescript -g
+            
   install_ansible:
     description: Install Ansible
     steps:
@@ -289,12 +297,14 @@ jobs:
       - checkout
       - install_nodejs
       - install_awscli
+      - install_typescript
       - restore_cache:
           keys: [backend-build]
       - run: 
           name: Run migrations 
           command: |
             cd backend
+            npm install
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
       - run:
