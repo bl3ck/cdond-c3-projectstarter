@@ -310,11 +310,15 @@ jobs:
       - install_typescript
       - restore_cache:
           keys: [backend-build]
+      - run:
+          name: remove node modules
+          command: |
+            cd backend
+            sudo rm -rf node_modules
       - run: 
           name: Run migrations 
           command: |
             cd backend
-            npm cache clean –force
             npm install
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
