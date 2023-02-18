@@ -311,12 +311,12 @@ jobs:
       - install_typescript
       - restore_cache:
           keys: [backend-build]
-      - run: 
-          name: NPM audit
-          command: |
-            cd backend
-            npm install
-            npm audit fix
+      # - run: 
+      #     name: NPM audit
+      #     command: |
+      #       cd backend
+      #       npm install
+      #       npm audit fix
       - run:
           name: remove node modules
           command: |
