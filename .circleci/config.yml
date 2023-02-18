@@ -65,8 +65,6 @@ commands:
           name: Install npm@9.4.2
           command: |
             sudo npm install -g npm@9.4.2
-            # Another npm
-            sudo npm i -g npm 
             
   install_ansible:
     description: Install Ansible
