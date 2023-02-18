@@ -310,11 +310,18 @@ jobs:
       - install_typescript
       - restore_cache:
           keys: [backend-build]
+      - run: 
+          name: NPM audit
+          command: |
+            cd backend
+            npm audit fix
       - run:
           name: remove node modules
           command: |
             cd backend
-            sudo rm -rf node_modules 
+            sudo rm -rf node_modules
+            sudo rm package-lock.json yarn.lock
+            npm cache clear --force
       - run: 
           name: Run migrations 
           command: |
