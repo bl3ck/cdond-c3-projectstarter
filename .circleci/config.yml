@@ -314,6 +314,7 @@ jobs:
           name: NPM audit
           command: |
             cd backend
+            npm install
             npm audit fix
       - run:
           name: remove node modules
