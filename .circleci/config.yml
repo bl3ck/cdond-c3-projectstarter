@@ -57,9 +57,9 @@ commands:
       - run:
           name: Install TypeScript
           command: |
-            curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-            sudo apt-get install -y nodejs
-            sudo npm install typescript -g
+            curl -s https://deb.nodesource.com/setup_16.x | sudo bash
+            sudo apt install nodejs -y
+            sudo npm install -g typescript@latest
   install_npm9:
     description: Install npm@9.4.2
     steps:
