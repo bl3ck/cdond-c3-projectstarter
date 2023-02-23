@@ -359,7 +359,7 @@ jobs:
           name: Install dependencies
           command: |
             cd frontend
-            npm update
+            # npm update
             npm install
             # export NODE_OPTIONS=--openssl-legacy-provider
       - run:
