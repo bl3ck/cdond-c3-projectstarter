@@ -311,7 +311,6 @@ jobs:
       - checkout
       - install_nodejs_13
       - install_awscli
-      - install_typescript
       - restore_cache:
           keys: [backend-build]
       # - run:
@@ -325,9 +324,9 @@ jobs:
           command: |
             cd backend
             npm install
-            # npm cache clear --force
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
+            # npm cache clear --force
       - run:
           name: Send migration results to kvdb.io
           command: |
