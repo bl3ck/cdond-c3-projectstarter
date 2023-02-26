@@ -328,8 +328,9 @@ jobs:
           name: Run migrations 
           command: |
             cd backend
+            npm run clean
+            sudo rm -rf node_modules
             npm install
-            sleep 60
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
             # npm cache clear --force
