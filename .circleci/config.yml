@@ -324,11 +324,13 @@ jobs:
             cd backend
             sudo rm -rf node_modules
             npm cache clean --force
+            npm install npm@latest -g
+            npm install
+            npm audit fix --force
       - run: 
           name: Run migrations 
           command: |
             cd backend
-            npm install
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
             # npm cache clear --force
