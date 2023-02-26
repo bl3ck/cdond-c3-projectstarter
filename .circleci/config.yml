@@ -438,7 +438,7 @@ jobs:
     steps:
       - checkout
       - install_awscli
-      - install_nodejs
+      - install_nodejs_13
       - run:
           name: Frontend smoke test
           command: |
@@ -471,24 +471,25 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
   cloudfront-update:
     docker:
-      # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli
+      - image: cimg/base:stable
     steps:
       # Checkout code from git
       - checkout
+      - install_awscli
+      - install_nodejs_13
       - run:
-          name: Install image dependencies
+          name: Save Old Workflow ID to kvdb.io
           command: |
-            # Your code here
-            yum install tar gzip -y
-      - run:
-          name: Old Workflow ID to kvdb.io
-          command: |
-            export OLD_WORKFLOW_ID=$(aws cloudformation \
-                        list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                        --no-paginate --output text)
+            # Query AWS CloudFormation for a certain export value
+            export OLD_WORKFLOW_ID=$(aws cloudformation list-exports \
+                --query "Exports[?Name==\`WorkflowID\`].Value" \
+                --no-paginate --output text)
+            
+            # Save old workflow ID
             echo $OLD_WORKFLOW_ID >> ~/project/OLD_WORKFLOW_ID.txt
             cat ~/project/OLD_WORKFLOW_ID.txt
+            
+            # Save it on KVDB.io for retrieving it later
             curl https://kvdb.io/DkX3oHU6rtDfjXcrrzWZMV/old_workflow_id -d "${OLD_WORKFLOW_ID}"
       - persist_to_workspace:
           root: ~/
@@ -501,7 +502,7 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name InitialStack \
-              --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
               --tags project=udapeople
             echo Old Wokflow ID: "$(cat ~/project/OLD_WORKFLOW_ID.txt)"
             echo Current Wokflow ID: "${CIRCLE_WORKFLOW_ID:0:7}"
@@ -541,5 +542,5 @@ workflows:
           requires: [run-migrations]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
+      - cloudfront-update:
+          requires: [smoke-test]
