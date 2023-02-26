@@ -311,30 +311,30 @@ jobs:
   
   run-migrations:
     docker:
-      - image: circleci/node:16.13.0
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_nodejs_13
       - install_awscli
       - restore_cache:
-          keys: [backend-deps]
+          keys: [backend-build]
+      # - run:
+      #     name: remove node modules
+      #     command: |
+      #       cd backend
+      #       ls -al
+      #       sudo npm cache clean --force
+      #       sudo rm -rf node_modules
+      #       # sudo npm install npm@latest -g
+      #       npm install
+      #       npm audit fix --force
       - run:
-          name: remove node modules
+          name: Run migrations
           command: |
             cd backend
-            ls -al
-            sudo npm cache clean --force
-            sudo rm -rf node_modules
-            # sudo npm install npm@latest -g
             npm install
-            npm audit fix --force
-      - run: 
-          name: Run migrations 
-          command: |
-            cd backend
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
-            # npm cache clear --force
       - run:
           name: Send migration results to kvdb.io
           command: |
