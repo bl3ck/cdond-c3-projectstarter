@@ -325,7 +325,7 @@ jobs:
             ls -al
             sudo npm cache clean --force
             sudo rm -rf node_modules
-            sudo npm install npm@latest -g
+            # sudo npm install npm@latest -g
             npm install
             npm audit fix --force
       - run: 
