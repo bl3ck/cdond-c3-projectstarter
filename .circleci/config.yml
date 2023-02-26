@@ -322,9 +322,10 @@ jobs:
           name: remove node modules
           command: |
             cd backend
+            ls -al
+            sudo npm cache clean --force
             sudo rm -rf node_modules
-            npm cache clean --force
-            npm install npm@latest -g
+            sudo npm install npm@latest -g
             npm install
             npm audit fix --force
       - run: 
