@@ -97,6 +97,20 @@ commands:
               # sudo npm install --global n
               # sudo n 13.8.0
               sudo npm i -g npm@latest
+  install_nodejs_13:
+      description: Install Node.js 13.8.0
+      steps:
+        - run:
+            name: Install Node.js 13.8.0
+            command: |
+              # Install Node.js LTS version as our base Node.js version
+              curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+              sudo apt install -y nodejs
+
+              # Use n version manager to use Node.js v13.8.0
+              sudo npm install --global n
+              sudo n 13.8.0
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -286,11 +300,6 @@ jobs:
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
           # no_output_timeout: 30m
-      # - run:
-      #     name: Configure Node exporter on the server
-      #     command: |
-      #       cd .circleci/ansible
-      #       ansible-playbook -i inventory.txt configure-prometheus-node-exporter.yml
       # Here's where you will add some code to rollback on failure 
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -300,30 +309,23 @@ jobs:
       - image: circleci/node:16.13.0
     steps:
       - checkout
-      - install_nodejs
+      - install_nodejs_13
       - install_awscli
-      # - install_npm9
       - install_typescript
       - restore_cache:
           keys: [backend-build]
-      # - run: 
-      #     name: NPM audit
+      # - run:
+      #     name: remove node modules
       #     command: |
       #       cd backend
-      #       npm install
-      #       npm audit fix
-      - run:
-          name: remove node modules
-          command: |
-            cd backend
-            sudo rm -rf node_modules
-            npm cache clear --force
+      #       sudo rm -rf node_modules
+      #       npm cache clear --force
       - run: 
           name: Run migrations 
           command: |
             cd backend
             npm install
-            npm cache clear --force
+            # npm cache clear --force
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
       - run:
@@ -524,8 +526,8 @@ workflows:
               only: [master]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
       # - deploy-frontend:
       #     requires: [run-migrations]
       # - deploy-backend:
