@@ -333,6 +333,8 @@ jobs:
           command: |
             cd backend
             npm install
+            sudo npm install -g n
+            sudo n stable
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
             # npm cache clear --force
