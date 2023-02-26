@@ -322,13 +322,12 @@ jobs:
           name: remove node modules
           command: |
             cd backend
-            # sudo rm -rf node_modules
-            # npm cache clear --force
+            sudo rm -rf node_modules
+            npm cache clean --force
       - run: 
           name: Run migrations 
           command: |
             cd backend
-            sudo rm -rf node_modules
             npm install
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
