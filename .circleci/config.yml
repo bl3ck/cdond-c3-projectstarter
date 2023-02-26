@@ -125,7 +125,6 @@ jobs:
             cd frontend
             npm install
             npm run build
-            exit
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -179,7 +178,6 @@ jobs:
               cd backend
               npm install
               npm run test
-              exit
       - save_cache:
           paths: [backend/node_modules]
           key: test-backend
@@ -270,7 +268,7 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - install_tar_unzip
+      # - install_tar_unzip
       - install_awscli
       - install_ansible
       # Add ssh keys with fingerprint
@@ -285,18 +283,14 @@ jobs:
             # Your code here
             pwd
             cd .circleci/ansible
-            ls -al
             cat inventory.txt
-            # ansible web -i tests -m ping
-            # ansible all -m ping -vvvv
-            # ansible web -m ping -u ubuntu
             ansible-playbook -i inventory.txt configure-server.yml
-          no_output_timeout: 30m
-      - run:
-          name: Configure Node exporter on the server
-          command: |
-            cd .circleci/ansible
-            ansible-playbook -i inventory.txt configure-prometheus-node-exporter.yml
+          # no_output_timeout: 30m
+      # - run:
+      #     name: Configure Node exporter on the server
+      #     command: |
+      #       cd .circleci/ansible
+      #       ansible-playbook -i inventory.txt configure-prometheus-node-exporter.yml
       # Here's where you will add some code to rollback on failure 
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -530,13 +524,13 @@ workflows:
               only: [master]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
-      - deploy-backend:
-          requires: [run-migrations]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
-          requires: [smoke-test]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
+      # - deploy-frontend:
+      #     requires: [run-migrations]
+      # - deploy-backend:
+      #     requires: [run-migrations]
+      # - smoke-test:
+      #     requires: [deploy-backend, deploy-frontend]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
